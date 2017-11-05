@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import {
+  Alert,
   Platform,
   StyleSheet,
   Text,
@@ -19,8 +20,21 @@ export default class App extends Component<{}> {
 
   constructor(props) {
     super(props);
-    this.state = {code: 'Wating...'};
+    this.state = { detected: false };
   }
+
+  readBarCode = (e) => {
+    if (this.state.detected) return;
+
+    this.setState({ detected: true });
+
+    Alert.alert(
+      '',
+      e.data,
+      [{ text: 'Ok', onPress: () => this.setState({ detected: false }) }],
+      { cancelable: false }
+    );
+  };
 
   render() {
     return (
@@ -30,9 +44,9 @@ export default class App extends Component<{}> {
             this.camera = cam;
           }}
           style={styles.preview}
-          onBarCodeRead={(event) => this.setState({ code: event.data })}
+          onBarCodeRead={(e) => this.readBarCode(e)}
           aspect={Camera.constants.Aspect.fill}>
-          <Text style={styles.capture}>{ this.state.code }</Text>
+          <Text style={styles.capture}>{ this.state.detected ? 'Detected' : 'Waiting...' }</Text>
         </Camera>
       </View>
     );
